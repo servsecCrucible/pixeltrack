@@ -82,8 +82,8 @@ class PixelTrackerApp < Sinatra::Base
 
     begin
       new_data = JSON.parse(request.body.read)
-      new_config = Pixel.new(new_data)
-      if new_config.save
+      new_pixel = Pixel.new(new_data)
+      if new_pixel.save
         logger.info "NEW PIXEL STORED: #{new_pixel.id}"
       else
         halt 400, "Could not store pixel: #{new_pixel}"
