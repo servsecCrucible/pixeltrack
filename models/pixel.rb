@@ -9,8 +9,8 @@ class Pixel
   def initialize(new_pixel)
     @id = new_pixel['id'] || new_id
     @label = new_pixel['label']
-    @url = new_pixel['url']
-    @views = new_pixel['views']
+    @url = '/api/v1/#{@id}.png'
+    @views = 0
   end
 
   def new_id
