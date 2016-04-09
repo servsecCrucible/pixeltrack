@@ -6,12 +6,14 @@ gem 'thin'
 gem 'json'
 gem 'sequel'
 
+group :development, :test do
+  gem 'sqlite3'
+end
 
 group :development do
   gem 'rerun'
   gem 'tux'
   gem 'hirb'
-  gem 'sqlite3'	
 end
 
 group :test do 
