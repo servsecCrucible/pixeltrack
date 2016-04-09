@@ -6,8 +6,10 @@ Sequel.migration do
   	  primary_key :id
   	  foreign_key :campaign_id
   	  
-  	  String :label, unique: true, null: false
+  	  String :label, null: false
   	  String :url, unique: true, null: false
+
+  	  unique [:campaign_id, :label]
   	end
   end
 end
