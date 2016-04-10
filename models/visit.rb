@@ -6,17 +6,16 @@ class Visit < Sequel::Model
   many_to_one :trackers
 
   def to_json(options = {})
-  	JSON({ type: 'tracker',
-  	       id: id,
-  	       data: {
-  	         uid: uid,
-  	         user_agent: user_agent,
-  	         location: location,
-  	         date: date,
-  	         language: language 	
-  	       } 
-  		},
-  		options)
+    JSON({  type: 'tracker',
+            id: id,
+            data: {
+              uid: uid,
+              user_agent: user_agent,
+              location: location,
+              date: date,
+              language: language
+            }
+          },
+          options)
   end
-
 end

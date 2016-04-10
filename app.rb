@@ -1,12 +1,13 @@
 require 'sinatra'
 require 'json'
-require 'base64'
-require_relative 'models/pixel'
+require_relative 'config/environments'
+require_relative 'models/init'
 
 # Configuration of Pixel tracker API
 class PixelTrackerApp < Sinatra::Base
   before do
-    Pixel.setup
+    host_url = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
+    @request_url = URI.join(host_url, request.path.to_s)
   end
 
   get '/?' do
@@ -48,6 +49,7 @@ class PixelTrackerApp < Sinatra::Base
     apidoc.to_json
   end
 
+=begin
   get '/api/v1/pixels/?' do
     content_type 'application/json'
     id_list = Pixel.all
@@ -95,4 +97,5 @@ class PixelTrackerApp < Sinatra::Base
       logger.info "FAILED to create new pixel: #{e.inspect}"
     end
   end
+=end
 end

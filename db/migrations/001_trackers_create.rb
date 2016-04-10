@@ -1,15 +1,16 @@
 require 'sequel'
 
-Sequel.migration do 	
+Sequel.migration do
   change do
-  	create_table(:trackers) do
-  	  primary_key :id
-  	  foreign_key :campaign_id
-  	  
-  	  String :label, null: false
-  	  String :url, unique: true, null: false
+    create_table(:trackers) do
+      primary_key :id
+      foreign_key :campaign_id
 
-  	  unique [:campaign_id, :label]
-  	end
+      String :label, null: false
+      String :url, unique: true
+
+      unique [:campaign_id, :label]
+    end
   end
 end
+

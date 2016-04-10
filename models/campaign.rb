@@ -2,7 +2,7 @@ require 'json'
 require 'sequel'
 
 # Holds the visits information for each pixel tracker
-class Visit < Sequel::Model
+class Campaign < Sequel::Model
   one_to_many :trackers
 
   def to_json(options = {})
