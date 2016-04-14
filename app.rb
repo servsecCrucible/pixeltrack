@@ -49,6 +49,97 @@ class PixelTrackerApp < Sinatra::Base
     apidoc.to_json
   end
 
+  get '/api/v1/campaigns/?' do
+    content_type 'application/json'
+    JSON.pretty_generate(data: Campaign.all)
+  end
+
+  get '/api/v1/campaigns/:id' do
+    content_type 'application/json'
+
+    id = params[:id]
+    campaign = Campaign[id]
+    trackers = campaign ? Campaign[id].trackers : []
+
+    if campaign
+      JSON.pretty_generate(data: campaign, relationships: trackers)
+    else
+      halt 404, "PROJECT NOT FOUND: #{id}"
+    end
+  end
+
+  post '/api/v1/campaigns/?' do
+    begin
+      new_data = JSON.parse(request.body.read)
+      saved_campaign = Campaign.create(new_data)
+    rescue => e
+      logger.info "FAILED to create new campaign: #{e.inspect}"
+      halt 400
+    end
+
+    new_location = URI.join(@request_url.to_s + '/', saved_campaign.id.to_s).to_s
+
+    status 201
+    headers('Location' => new_location)
+  end
+
+  get '/api/v1/campaigns/:id/trackers/?' do
+    content_type 'application/json'
+
+    campaign = Campaign[params[:id]]
+
+    JSON.pretty_generate(data: campaign.trackers)
+  end
+
+  get '/api/v1/campaigns/:campaign_id/trackers/:id/?' do
+    content_type 'application/json'
+
+    begin
+      doc_url = URI.join(@request_url.to_s + '/', 'document')
+      tracker = Tracker
+                .where(campaign_id: params[:campaign_id], id: params[:id])
+                .first
+      halt(404, 'Tracker not found') unless tracker
+      JSON.pretty_generate(data: {
+                             tracker: tracker,
+                             links: { document: doc_url }
+                           })
+    rescue => e
+      status 400
+      logger.info "FAILED to process GET tracker request: #{e.inspect}"
+      e.inspect
+    end
+  end
+
+  get '/api/v1/campaigns/:campaign_id/trackers/:id/document' do
+    content_type 'text/plain'
+
+    begin
+      Tracker
+        .where(campaign_id: params[:campaign_id], id: params[:id])
+        .first
+        .document
+    rescue => e
+      status 404
+      e.inspect
+    end
+  end
+
+  post '/api/v1/campaign/:campaign_id/trackers/?' do
+    begin
+      new_data = JSON.parse(request.body.read)
+      campaign = Campaign[params[:campaign_id]]
+      saved_tracker = campaign.add_tracker(new_data)
+    rescue => e
+      logger.info "FAILED to create new tracker: #{e.inspect}"
+      halt 400
+    end
+
+    status 201
+    new_location = URI.join(@request_url.to_s + '/', saved_tracker.id.to_s).to_s
+    headers('Location' => new_location)
+  end
+
   #   get '/api/v1/pixels/?' do
   #     content_type 'application/json'
   #     id_list = Pixel.all
