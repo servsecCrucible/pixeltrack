@@ -95,14 +95,14 @@ class PixelTrackerAPI < Sinatra::Base
     content_type 'application/json'
 
     begin
-      doc_url = URI.join(@request_url.to_s + '/', 'document')
+      doc_url = URI.join(@request_url.to_s + '/', 'json')
       tracker = Tracker
                 .where(campaign_id: params[:campaign_id], id: params[:id])
                 .first
       halt(404, 'Tracker not found') unless tracker
       JSON.pretty_generate(data: {
                              tracker: tracker,
-                             links: { document: doc_url }
+                             links: { item_url: doc_url }
                            })
     rescue => e
       status 400
@@ -111,14 +111,14 @@ class PixelTrackerAPI < Sinatra::Base
     end
   end
 
-  get '/api/v1/campaigns/:campaign_id/trackers/:id/document' do
+  get '/api/v1/campaigns/:campaign_id/trackers/:id/json' do
     content_type 'text/plain'
 
     begin
       Tracker
         .where(campaign_id: params[:campaign_id], id: params[:id])
         .first
-        .document
+        .json
     rescue => e
       status 404
       e.inspect
