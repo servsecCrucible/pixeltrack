@@ -7,7 +7,7 @@ require_relative '../app'
 include Rack::Test::Methods
 
 def app
-  PixelTrackerApp
+  PixelTrackerAPI
 end
 
 def invalid_id(resource)

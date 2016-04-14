@@ -4,7 +4,7 @@ require_relative 'config/environments'
 require_relative 'models/init'
 
 # Configuration of Pixel tracker API
-class PixelTrackerApp < Sinatra::Base
+class PixelTrackerAPI < Sinatra::Base
   before do
     host_url = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
     @request_url = URI.join(host_url, request.path.to_s)
@@ -125,7 +125,7 @@ class PixelTrackerApp < Sinatra::Base
     end
   end
 
-  post '/api/v1/campaign/:campaign_id/trackers/?' do
+  post '/api/v1/campaigns/:campaign_id/trackers/?' do
     begin
       new_data = JSON.parse(request.body.read)
       campaign = Campaign[params[:campaign_id]]
@@ -139,52 +139,4 @@ class PixelTrackerApp < Sinatra::Base
     new_location = URI.join(@request_url.to_s + '/', saved_tracker.id.to_s).to_s
     headers('Location' => new_location)
   end
-
-  #   get '/api/v1/pixels/?' do
-  #     content_type 'application/json'
-  #     id_list = Pixel.all
-  #
-  #     { pixel_id: id_list }.to_json
-  #   end
-  #
-  #   get '/api/v1/pixels/:id.json' do
-  #     content_type 'application/json'
-  #
-  #     begin
-  #       { pixel: Pixel.find(params[:id]) }.to_json
-  #     rescue => e
-  #       status 404
-  #       logger.info "FAILED to GET pixel: #{e.inspect}"
-  #     end
-  #   end
-  #
-  #   get '/api/v1/pixels/:id/views' do
-  #     content_type 'text/plain'
-  #
-  #     begin
-  #       Base64.strict_decode64 Pixel.find(params[:id]).views
-  #     rescue => e
-  #       status 404
-  #       e.inspect
-  #     end
-  #   end
-  #
-  #   post '/api/v1/pixels/?' do
-  #     content_type 'application/json'
-  #
-  #     begin
-  #       new_data = JSON.parse(request.body.read)
-  #       new_pixel = Pixel.new(new_data)
-  #       if new_pixel.save
-  #         logger.info "NEW PIXEL STORED: #{new_pixel.id}"
-  #       else
-  #         halt 400, "Could not store pixel: #{new_pixel}"
-  #       end
-  #
-  #       redirect '/api/v1/pixels/' + new_pixel.id + '.json'
-  #     rescue => e
-  #       status 400
-  #       logger.info "FAILED to create new pixel: #{e.inspect}"
-  #     end
-  #   end
 end
