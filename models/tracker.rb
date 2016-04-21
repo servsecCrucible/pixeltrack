@@ -5,6 +5,7 @@ require 'sequel'
 class Tracker < Sequel::Model
   one_to_many :visits
   many_to_one :campaigns
+  set_allowed_columns :label  
 
   def to_json(options = {})
     JSON({  type: 'tracker',
