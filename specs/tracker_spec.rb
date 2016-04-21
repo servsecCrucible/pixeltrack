@@ -26,18 +26,6 @@ describe 'Testing Tracker resource routes' do
       _(last_response.status).must_equal 400
       _(last_response.location).must_be_nil
     end
-
-    it 'SAD: should catch duplicate tracker objects within a campaign' do
-      existing_campaign = Campaign.create(label: 'Demo Campaign')
-
-      req_header = { 'CONTENT_TYPE' => 'application/json' }
-      req_body = { label: 'Demo Tracker' }.to_json
-      url = "/api/v1/campaigns/#{existing_campaign.id}/trackers"
-      post url, req_body, req_header
-      post url, req_body, req_header
-      _(last_response.status).must_equal 400
-      _(last_response.location).must_be_nil
-    end
   end
 
   describe 'Getting trackers' do
@@ -48,6 +36,17 @@ describe 'Testing Tracker resource routes' do
       _(last_response.status).must_equal 200
       parsed_tracker = JSON.parse(last_response.body)['data']['tracker']
       _(parsed_tracker['type']).must_equal 'tracker'
+    end
+
+    it 'HAPPY: should encrypt relevant data' do
+      original_label = "Super pixel tracker"
+
+      tracker = Tracker.new(label: original_label)
+      tracker.save()
+      id = tracker.id
+
+      _(Tracker[id].label).must_equal original_label
+      _(Tracker[id].label_encrypted).wont_equal original_label
     end
 
     it 'SAD: should not find non-existant campaign and tracker' do

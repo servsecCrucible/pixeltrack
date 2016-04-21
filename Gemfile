@@ -5,9 +5,11 @@ gem 'sinatra'
 gem 'thin'
 gem 'json'
 gem 'sequel'
+gem 'rbnacl-libsodium'
 
 group :development, :test do
   gem 'sqlite3'
+  gem 'config_env'
 end
 
 group :development do
@@ -16,7 +18,7 @@ group :development do
   gem 'hirb'
 end
 
-group :test do 
+group :test do
   gem 'minitest'
   gem 'rack'
   gem 'rack-test'

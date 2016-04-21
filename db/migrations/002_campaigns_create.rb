@@ -5,8 +5,8 @@ Sequel.migration do
     create_table(:campaigns) do
       primary_key :id
 
-      String :label, unique: true, null: false
+      String :label_encrypted, text: true, null: false
+      String :nonce
     end
   end
 end
-
