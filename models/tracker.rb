@@ -3,8 +3,10 @@ require 'sequel'
 
 #Holds the trackers information
 class Tracker < Sequel::Model
+  plugin :uuid, :field => :id
   one_to_many :visits
   many_to_one :campaigns
+  set_allowed_columns :label  
 
   def to_json(options = {})
     JSON({  type: 'tracker',

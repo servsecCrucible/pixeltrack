@@ -4,6 +4,7 @@ require 'sequel'
 # Holds the visits information for each pixel tracker
 class Visit < Sequel::Model
   many_to_one :trackers
+  set_allowed_columns nil
 
   def to_json(options = {})
     JSON({  type: 'tracker',
