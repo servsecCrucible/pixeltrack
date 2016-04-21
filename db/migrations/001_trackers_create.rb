@@ -6,11 +6,9 @@ Sequel.migration do
       String :id, type: :uuid, primary_key: true
       foreign_key :campaign_id
 
-      String :label, null: false
+      String :label_encrypted, text: true, null: false
       String :url, unique: true
-
-      unique [:campaign_id, :label]
+      String :nonce
     end
   end
 end
-

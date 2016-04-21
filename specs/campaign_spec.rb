@@ -15,13 +15,15 @@ describe 'Testing Campaign resource routes' do
       _(last_response.location).must_match(%r{http://})
     end
 
-    it 'SAD: should not create campaigns with duplicate labels' do
-      req_header = { 'CONTENT_TYPE' => 'application/json' }
-      req_body = { label: 'Demo Campaign' }.to_json
-      post '/api/v1/campaigns/', req_body, req_header
-      post '/api/v1/campaigns/', req_body, req_header
-      _(last_response.status).must_equal 400
-      _(last_response.location).must_be_nil
+    it 'HAPPY: should encrypt relevant data' do
+      original_label = "My best campaign"
+
+      campaign = Campaign.new(label: original_label)
+      campaign.save()
+      id = campaign.id
+
+      _(Campaign[id].label).must_equal original_label
+      _(Campaign[id].label_encrypted).wont_equal original_label
     end
   end
 
