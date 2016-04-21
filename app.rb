@@ -107,21 +107,7 @@ class PixelTrackerAPI < Sinatra::Base
             e.inspect
         end
     end
-
-    get '/api/v1/campaigns/:campaign_id/trackers/:id/json' do
-        content_type 'text/plain'
-
-        begin
-            Tracker
-                .where(campaign_id: params[:campaign_id], id: params[:id])
-                .first
-                .json
-        rescue => e
-            status 404
-            e.inspect
-        end
-    end
-
+    
     post '/api/v1/campaigns/:campaign_id/trackers/?' do
         begin
             new_data = JSON.parse(request.body.read)
