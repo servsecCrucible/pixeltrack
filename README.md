@@ -48,6 +48,18 @@ Install this API by cloning the *relevant branch* and installing required gems:
 
     $ bundle install
 
+Create a configuration file to store database key
+
+    $ touch config_env.rb
+    $ gedit config_env.rb
+    $ rake key:generate (Generate database key)
+
+    Amend config_env.rb file with the following:
+
+    config_env :development, :test do
+      set 'DB_KEY', "generated key"
+    end
+
 ## Testing
 
 Test this API by running:
