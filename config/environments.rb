@@ -1,7 +1,10 @@
+require 'sinatra'
+
 configure :development, :test do
   require 'config_env'
   ConfigEnv.path_to_config("#{__dir__}/config_env.rb")
 end
+
 configure :development do
   ENV['DATABASE_URL'] = 'sqlite://db/dev.db'
   require 'hirb'
