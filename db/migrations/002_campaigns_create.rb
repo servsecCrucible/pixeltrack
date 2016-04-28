@@ -6,7 +6,6 @@ Sequel.migration do
       primary_key :id
 
       String :label_encrypted, text: true, null: false
-      String :nonce
     end
   end
 end

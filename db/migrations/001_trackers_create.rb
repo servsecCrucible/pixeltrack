@@ -8,7 +8,6 @@ Sequel.migration do
 
       String :label_encrypted, text: true, null: false
       String :url, unique: true
-      String :nonce
     end
   end
 end

@@ -3,7 +3,7 @@ require 'sequel'
 
 #Holds the trackers information
 class Tracker < Sequel::Model
-  include EncryptableModel
+  include SecureModel
   plugin :uuid, :field => :id
 
   one_to_many :visits
@@ -11,7 +11,7 @@ class Tracker < Sequel::Model
   set_allowed_columns :label
 
   def label=(label_plaintext)
-    self.label_encrypted = encrypt(label_plaintext)
+    self.label_encrypted = encrypt(label_plaintext) if label_plaintext
   end
 
   def label
