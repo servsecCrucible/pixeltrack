@@ -10,12 +10,14 @@ class Tracker < Sequel::Model
   many_to_one :campaigns
   set_allowed_columns :label
 
+  plugin :association_dependencies, visits: :destroy
+
   def label=(label_plaintext)
     self.label_encrypted = encrypt(label_plaintext) if label_plaintext
   end
 
   def label
-    @label = decrypt(label_encrypted)
+    decrypt(label_encrypted)
   end
 
   def to_json(options = {})

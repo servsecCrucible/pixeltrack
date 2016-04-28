@@ -12,24 +12,23 @@ module SecureModel
     if plaintext
       simple_box = RbNaCl::SimpleBox.from_secret_key(key)
       ciphertext = simple_box.encrypt(plaintext)
-      #secret_box = RbNaCl::SecretBox.new(key)
-      #new_once = RbNaCl::Random.random_bytes(secret_box.nonce_bytes)
-      #ciphertext = secret_box.encrypt(new_once, plaintext)
-      #self.nonce = Base64.strict_encode64(new_once)
       Base64.strict_encode64(ciphertext)
     end
   end
 
-  def decrypt(encrypted)
-    if encrypted
+  def decrypt(encrypted_64)
+    if encrypted_64
       simple_box = RbNaCl::SimpleBox.from_secret_key(key)
-      ciphertext = Base64.strict_decode64(encrypted)
+      ciphertext = Base64.strict_decode64(encrypted_64)
       simple_box.decrypt(ciphertext)
-
-      #secret_box = RbNaCl::SecretBox.new(key)
-      #old_nonce = Base64.strict_decode64(nonce)
-      #ciphertext = Base64.strict_decode64(encrypted)
-      #secret_box.decrypt(old_nonce, ciphertext)
     end
   end
+
+  def hash_password(salt, pwd)
+   opslimit = 2**20
+   memlimit = 2**24
+   digest_size = 64
+   RbNaCl::PasswordHash.scrypt(pwd, salt, opslimit, memlimit, digest_size)
+ end
+ 
 end
