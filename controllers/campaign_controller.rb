@@ -7,7 +7,7 @@ class PixelTrackerAPI < Sinatra::Base
   get '/api/v1/campaigns/:id' do
       content_type 'application/json'
 
-      campaign = Campaign.where(id: params[:id]).first
+      campaign = Campaign[params[:id]]
       trackers = campaign ? campaign.trackers : []
 
       if campaign
@@ -20,7 +20,7 @@ class PixelTrackerAPI < Sinatra::Base
   post '/api/v1/campaigns/?' do
       begin
           new_data = JSON.parse(request.body.read)
-          saved_campaign = Campaign.create(new_data)
+          saved_campaign = CreateNewCampaign.call(label: new_data['label'])
       rescue => e
           logger.info "FAILED to create new campaign: #{e.inspect}"
           halt 400
@@ -34,7 +34,7 @@ class PixelTrackerAPI < Sinatra::Base
 
   get '/api/v1/campaigns/:id/trackers/?' do
       content_type 'application/json'
-      campaign = Campaign.where(id: params[:id]).first
+      campaign = Campaign[params[:id]]
       JSON.pretty_generate(data: campaign.trackers)
   end
 end

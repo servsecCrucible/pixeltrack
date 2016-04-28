@@ -16,11 +16,21 @@ describe 'Testing Campaign resource routes' do
       _(last_response.status).must_equal 201
       _(last_response.location).must_match(%r{http://})
     end
+
+    it 'HAPPY: should encrypt relevant data' do
+      original_label = "My best campaign"
+
+      campaign = CreateNewCampaign.call(label: original_label)
+      id = campaign.id
+
+      _(Campaign[id].label).must_equal original_label
+      _(Campaign[id].label_encrypted).wont_equal original_label
+    end
   end
 
   describe 'Finding existing campaigns' do
     it 'HAPPY: should find an existing campaign' do
-      new_campaign = Campaign.create(label: 'Demo Campaign')
+      new_campaign = CreateNewCampaign.call(label: 'Demo Campaign')
       new_trackers = (1..3).map do |i|
         new_campaign.add_tracker(label: "tracker_file#{i}")
       end
@@ -43,7 +53,7 @@ describe 'Testing Campaign resource routes' do
 
   describe 'Getting an index of existing campaigns' do
     it 'HAPPY: should find list of existing campaigns' do
-      (1..5).each { |i| Campaign.create(label: "Campaign #{i}") }
+      (1..5).each { |i| CreateNewCampaign.call(label: "Campaign #{i}") }
       result = get '/api/v1/campaigns'
       camps = JSON.parse(result.body)
       _(camps['data'].count).must_equal 5

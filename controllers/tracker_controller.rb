@@ -4,9 +4,7 @@ class PixelTrackerAPI < Sinatra::Base
 
     begin
         doc_url = URI.join(@request_url.to_s + '/', 'json')
-        tracker = Tracker
-                  .where(campaign_id: params[:campaign_id], id: params[:id])
-                  .first
+        tracker = Tracker[params[:id]]
         halt(404, 'Tracker not found') unless tracker
         JSON.pretty_generate(data: {
                                  tracker: tracker,
@@ -22,7 +20,7 @@ class PixelTrackerAPI < Sinatra::Base
   post '/api/v1/campaigns/:campaign_id/trackers/?' do
     begin
         new_data = JSON.parse(request.body.read)
-        campaign = Campaign.where(id: params[:campaign_id]).first
+        campaign = Campaign[params[:campaign_id]]
         saved_tracker = campaign.add_tracker(new_data)
     rescue => e
         logger.info "FAILED to create new tracker: #{e.inspect}"

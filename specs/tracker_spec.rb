@@ -10,7 +10,7 @@ describe 'Testing Tracker resource routes' do
 
   describe 'Creating new trackers for campaigns' do
     it 'HAPPY: should add a new tracker for an existing campaign' do
-      existing_campaign = Campaign.create(label: 'Demo Campaign')
+      existing_campaign = CreateNewCampaign.call(label: 'Demo Campaign')
 
       req_header = { 'CONTENT_TYPE' => 'application/json' }
       req_body = { label: 'Demo Tracker' }.to_json
@@ -32,7 +32,7 @@ describe 'Testing Tracker resource routes' do
 
   describe 'Getting trackers' do
     it 'HAPPY: should find existing tracker' do
-      tracker = Campaign.create(label: 'Demo Campaign')
+      tracker = CreateNewCampaign.call(label: 'Demo Campaign')
                         .add_tracker(label: 'demo_tracker')
       get "/api/v1/campaigns/#{tracker.campaign_id}/trackers/#{tracker.id}"
       _(last_response.status).must_equal 200
@@ -43,8 +43,7 @@ describe 'Testing Tracker resource routes' do
     it 'HAPPY: should encrypt relevant data' do
       original_label = "Super pixel tracker"
 
-      tracker = Tracker.new(label: original_label)
-      tracker.save()
+      tracker = CreateNewTracker.call(label: original_label)
       id = tracker.id
 
       _(Tracker[id].label).must_equal original_label
@@ -59,7 +58,7 @@ describe 'Testing Tracker resource routes' do
     end
 
     it 'SAD: should not find non-existant tracker for existing campaign' do
-      camp_id = Campaign.create(label: 'Demo Campaign').id
+      camp_id = CreateNewCampaign.call(label: 'Demo Campaign').id
       track_id = invalid_id(Tracker)
       get "/api/v1/campaigns/#{camp_id}/trackers/#{track_id}"
       _(last_response.status).must_equal 404
