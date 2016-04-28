@@ -2,8 +2,10 @@ require_relative './spec_helper'
 
 describe 'Testing Tracker resource routes' do
   before do
-    Campaign.dataset.delete
-    Tracker.dataset.delete
+    Tracker.dataset.destroy
+    Campaign.dataset.destroy
+    Account.dataset.destroy
+    Visit.dataset.destroy
   end
 
   describe 'Creating new trackers for campaigns' do

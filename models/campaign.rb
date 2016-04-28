@@ -5,16 +5,28 @@ require 'sequel'
 class Campaign < Sequel::Model
   include SecureModel
 
+  set_allowed_columns :label
+
   one_to_many :trackers
-  set_allowed_columns :label 
+  many_to_one :owner, class: :Account
+  many_to_many :contributors,
+               class: :Account, join_table: :accounts_campaigns,
+               left_key: :campaign_id, right_key: :contributor_id
 
-  def label=(label_plaintext)
-    self.label_encrypted = encrypt(label_plaintext) if label_plaintext
+  plugin :association_dependencies, trackers: :destroy
+
+  def before_destroy
+    DB[:accounts_campaigns].where(campaign_id: id).delete
+    super
   end
 
-  def label
-    @label = decrypt(label_encrypted)
-  end
+  # def label=(label_plaintext)
+  #   self.label_encrypted = encrypt(label_plaintext) if label_plaintext
+  # end
+  #
+  # def label
+  #   @label = decrypt(label_encrypted)
+  # end
 
   def to_json(options = {})
   	JSON({ type: 'campaign',
