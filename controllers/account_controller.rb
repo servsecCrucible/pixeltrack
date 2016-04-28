@@ -1,5 +1,5 @@
 # Sinatra Application Controllers
-class ShareConfigurationsAPI < Sinatra::Base
+class PixelTrackerAPI < Sinatra::Base
   get '/api/v1/accounts/:username' do
     content_type 'application/json'
 
@@ -38,7 +38,7 @@ class ShareConfigurationsAPI < Sinatra::Base
       new_data = JSON.parse(request.body.read)
 
       account = Account.where(username: username).first
-      saved_campaign = account.add_owned_campaign(name: new_data['name'])
+      saved_campaign = account.add_owned_campaign(label: new_data['label'])
       saved_campaign.save
     rescue => e
       logger.info "FAILED to create new campaign: #{e.inspect}"

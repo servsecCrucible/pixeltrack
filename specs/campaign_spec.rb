@@ -2,8 +2,10 @@ require_relative './spec_helper'
 
 describe 'Testing Campaign resource routes' do
   before do
-    Tracker.dataset.delete
-    Campaign.dataset.delete
+    Tracker.dataset.destroy
+    Campaign.dataset.destroy
+    Account.dataset.destroy
+    Visit.dataset.destroy
   end
 
   describe 'Creating new Campaigns' do
@@ -13,17 +15,6 @@ describe 'Testing Campaign resource routes' do
       post '/api/v1/campaigns/', req_body, req_header
       _(last_response.status).must_equal 201
       _(last_response.location).must_match(%r{http://})
-    end
-
-    it 'HAPPY: should encrypt relevant data' do
-      original_label = "My best campaign"
-
-      campaign = Campaign.new(label: original_label)
-      campaign.save()
-      id = campaign.id
-
-      _(Campaign[id].label).must_equal original_label
-      _(Campaign[id].label_encrypted).wont_equal original_label
     end
   end
 

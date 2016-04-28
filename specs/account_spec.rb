@@ -58,7 +58,7 @@ describe 'Testing Account resource routes' do
         username: 'test.name',
         email: 'test@email.com', password: 'mypassword')
       new_campaigns = (1..3).map do |i|
-        new_account.add_owned_campaign(name: "Campaign #{i}")
+        new_account.add_owned_campaign(label: "Campaign #{i}")
       end
 
       get "/api/v1/accounts/#{new_account.username}"
@@ -72,7 +72,7 @@ describe 'Testing Account resource routes' do
     end
 
     it 'SAD: should not find non-existent accounts' do
-      get "/api/v1/accounts/#{random_str(10)}"
+      get "/api/v1/accounts/I-DO-NOT-EXIST"
       _(last_response.status).must_equal 404
     end
   end
@@ -87,7 +87,7 @@ describe 'Testing Account resource routes' do
 
     it 'HAPPY: should create a new unique campaign for account' do
       req_header = { 'CONTENT_TYPE' => 'application/json' }
-      req_body = { name: 'Demo Campaign' }.to_json
+      req_body = { label: 'Demo Campaign' }.to_json
       post "/api/v1/accounts/#{@account.username}/campaigns/",
            req_body, req_header
       _(last_response.status).must_equal 201
@@ -136,9 +136,9 @@ describe 'Testing Account resource routes' do
       my_camps = []
       3.times do |i|
         my_camps << my_account.add_owned_campaign(
-          name: "Campaign #{my_account.id}-#{i}")
+          label: "Campaign #{my_account.id}-#{i}")
         other_account.add_owned_campaign(
-          name: "Campaign #{other_account.id}-#{i}")
+          label: "Campaign #{other_account.id}-#{i}")
       end
 
       other_account.owned_campaigns.each.with_index do |camp, i|
