@@ -1,3 +1,4 @@
 require_relative 'base'
-require_relative 'campaign_controller'
-require_relative 'tracker_controller'
+require_relative 'accounts_controller'
+require_relative 'campaigns_controller'
+require_relative 'trackers_controller'
