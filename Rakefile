@@ -35,7 +35,7 @@ namespace :key do
 
   desc 'Create rbnacl key'
   task :generate do
-    key = RbNaCl::Random.random_bytes(RbNaCl::SecretBox.key_bytes)
+    key = RbNaCl::Random.random_bytes(RbNaCl::SimpleBox.key_bytes)
     puts "KEY: #{Base64.strict_encode64 key}"
   end
 end

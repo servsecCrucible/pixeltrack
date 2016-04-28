@@ -1,1 +1,1 @@
-require_relative 'encryptable_model'
+require_relative 'secure_model'
