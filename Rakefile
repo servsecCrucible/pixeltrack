@@ -19,6 +19,7 @@ namespace :db do
 
   desc 'Perform migration reset (full rollback and migration)'
   task :reset do
+    puts 'Performing migration reset (full rollback and migration)'
     Sequel::Migrator.run(DB, 'db/migrations', target: 0)
     Sequel::Migrator.run(DB, 'db/migrations')
   end
