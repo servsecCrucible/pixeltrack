@@ -24,3 +24,7 @@ group :test do
   gem 'rack-test'
   gem 'rake'
 end
+
+group :production do
+  gem 'pg'
+end

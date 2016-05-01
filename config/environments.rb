@@ -15,6 +15,10 @@ configure :test do
   ENV['DATABASE_URL'] = 'sqlite://db/test.db'
 end
 
+configure :production do
+
+end
+
 configure do
   enable :logging
   require 'sequel'
