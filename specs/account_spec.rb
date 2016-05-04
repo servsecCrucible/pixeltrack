@@ -121,6 +121,35 @@ describe 'Testing Account resource routes' do
     end
   end
 
+  describe 'Authenticating an account' do
+    before do
+      @account = CreateNewAccount.call(
+        username: 'authenticatingAnAccount',
+        email: 'authenticatingAnAccount@nthu.edu.tw',
+        password: 'authenticatingAnAccount.password')
+    end
+
+    it 'HAPPY: should be able to authenticate a real account' do
+      get '/api/v1/accounts/authenticatingAnAccount/authenticate?password=authenticatingAnAccount.password'
+      _(last_response.status).must_equal 200
+    end
+
+    it 'SAD: should not authenticate an account with a bad password' do
+      get '/api/v1/accounts/authenticatingAnAccount/authenticate?password=guess.password'
+      _(last_response.status).must_equal 401
+    end
+
+    it 'SAD: should not authenticate an account with an invalid username' do
+      get '/api/v1/accounts/randomuser/authenticate?password=authenticatingAnAccount.password'
+      _(last_response.status).must_equal 401
+    end
+
+    it 'BAD: should not authenticate an account with password' do
+      get '/api/v1/accounts/authenticatingAnAccount/authenticate'
+      _(last_response.status).must_equal 401
+    end
+  end
+
   describe 'Get index of all campaign for an account' do
     it 'HAPPY: should find all campaigns for an account' do
       my_account = CreateNewAccount.call(

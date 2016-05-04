@@ -1,6 +1,6 @@
 # Sinatra Application Controllers
 class PixelTrackerAPI < Sinatra::Base
-  get '/api/v1/accounts/:username' do
+  get '/api/v1/accounts/:username/?' do
     content_type 'application/json'
 
     username = params[:username]
@@ -10,7 +10,7 @@ class PixelTrackerAPI < Sinatra::Base
       campaigns = FindAccountAllCampaigns.call(account: account)
       JSON.pretty_generate(data: account, relationships: campaigns)
     else
-      halt 404, "CAMPAIGN NOT FOUND: #{username}"
+      halt 404, "USER NOT FOUND: #{username}"
     end
   end
 
