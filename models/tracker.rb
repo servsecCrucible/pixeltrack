@@ -3,7 +3,6 @@ require 'sequel'
 
 #Holds the trackers information
 class Tracker < Sequel::Model
-  include SecureModel
   plugin :uuid, :field => :id
 
   one_to_many :visits
@@ -13,11 +12,11 @@ class Tracker < Sequel::Model
   plugin :association_dependencies, visits: :destroy
 
   def label=(label_plaintext)
-    self.label_encrypted = encrypt(label_plaintext) if label_plaintext
+    self.label_encrypted = SecureDB.encrypt(label_plaintext) if label_plaintext
   end
 
   def label
-    decrypt(label_encrypted)
+    SecureDB.decrypt(label_encrypted)
   end
 
   def to_json(options = {})

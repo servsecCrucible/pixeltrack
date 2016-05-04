@@ -3,8 +3,6 @@ require 'sequel'
 
 # Holds the campaigns information for each pixel tracker
 class Campaign < Sequel::Model
-  include SecureModel
-
   set_allowed_columns :label
 
   one_to_many :trackers
