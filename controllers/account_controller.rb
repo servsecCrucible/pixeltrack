@@ -6,8 +6,8 @@ class PixelTrackerAPI < Sinatra::Base
     username = params[:username]
     account = Account.where(username: username).first
 
-    if account
-      campaigns = account.owned_campaigns
+    if account.is_a? Account
+      campaigns = FindAccountAllCampaigns.call(account: account)
       JSON.pretty_generate(data: account, relationships: campaigns)
     else
       halt 404, "CAMPAIGN NOT FOUND: #{username}"
@@ -38,8 +38,8 @@ class PixelTrackerAPI < Sinatra::Base
       new_data = JSON.parse(request.body.read)
 
       account = Account.where(username: username).first
-      saved_campaign = account.add_owned_campaign(label: new_data['label'])
-      saved_campaign.save
+      saved_campaign = CreateCampaignForOwner.call( account: account,
+                                                    label: new_data['label'])
     rescue => e
       logger.info "FAILED to create new campaign: #{e.inspect}"
       halt 400
@@ -57,12 +57,7 @@ class PixelTrackerAPI < Sinatra::Base
     begin
       username = params[:username]
       account = Account.where(username: username).first
-
-      my_campaigns = Campaign.where(owner_id: account.id).all
-      other_campaigns = Campaign.join(:accounts_campaigns, campaign_id: :id)
-                              .where(contributor_id: account.id).all
-
-      all_campaigns = my_campaigns + other_campaigns
+      all_campaigns = FindAccountAllCampaigns.call(account: account)
       JSON.pretty_generate(data: all_campaigns)
     rescue => e
       logger.info "FAILED to get campaigns for #{username}: #{e}"
