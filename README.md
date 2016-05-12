@@ -10,7 +10,7 @@ and make operational changes.
 Consider the case where a merchandiser is not completing the number of sales
 that it expects. The typical process of completing a sale is:
 
-1. Searche website for item
+1. Search website for item
 2. Select item and go to item page
 3. Add item to cart
 4. Initiate checkout process
@@ -77,3 +77,6 @@ Run this API during deployment:
 or use autoloading during development:
 
     $ bundle exec rerun rackup
+
+## Location
+[Deployed instance](https://pixeltrack-api.herokuapp.com "PixelTrackAPP")
