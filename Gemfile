@@ -6,6 +6,7 @@ gem 'thin'
 gem 'json'
 gem 'sequel'
 gem 'rbnacl-libsodium'
+gem 'rack-ssl-enforcer'
 
 group :development, :test do
   gem 'sqlite3'
