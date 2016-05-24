@@ -1,4 +1,10 @@
 class PixelTrackerAPI < Sinatra::Base
+
+  get '/:id.png' do
+    RecordVisit.call(tracker: Tracker[params[:id]], environement: env)
+    send_file 'public/image/pixel.png', :type => :jpg
+  end
+
   get '/api/v1/campaigns/:campaign_id/trackers/:id/?' do
     content_type 'application/json'
 

@@ -6,12 +6,13 @@ Sequel.migration do
       primary_key :id
       foreign_key :tracker_id
 
-      String :uid
-      String :user_agent
-      String :location
+      String :platform
+      String :os
       String :date
       String :language
+      String :ip
+      Boolean :isMobile
+      Boolean :isBot
     end
   end
 end
-

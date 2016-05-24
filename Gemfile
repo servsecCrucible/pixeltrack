@@ -8,6 +8,7 @@ gem 'sequel'
 gem 'rbnacl-libsodium'
 gem 'rack-ssl-enforcer'
 gem 'jose'
+gem 'useragent'
 
 group :development, :test do
   gem 'sqlite3'
