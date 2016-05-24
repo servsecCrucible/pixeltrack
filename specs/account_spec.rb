@@ -122,30 +122,41 @@ describe 'Testing Account resource routes' do
   end
 
   describe 'Authenticating an account' do
+    # TODO: only allow authorized client apps (to prevent brute force checks)
+    def login_with(username:, password:)
+      req_header = { 'CONTENT_TYPE' => 'application/json' }
+      req_body = { username: username,
+                   password: password }.to_json
+      post '/api/v1/accounts/authenticate', req_body, req_header
+    end
+
     before do
       @account = CreateNewAccount.call(
-        username: 'authenticatingAnAccount',
-        email: 'authenticatingAnAccount@nthu.edu.tw',
-        password: 'authenticatingAnAccount.password')
+        username: 'soumya.ray',
+        email: 'sray@nthu.edu.tw',
+        password: 'soumya.password')
     end
 
     it 'HAPPY: should be able to authenticate a real account' do
-      get '/api/v1/accounts/authenticatingAnAccount/authenticate?password=authenticatingAnAccount.password'
+      login_with(username: 'soumya.ray', password: 'soumya.password')
       _(last_response.status).must_equal 200
+      response = JSON.parse(last_response.body)
+      _(response['account']).wont_equal nil
+      _(response['auth_token']).wont_equal nil
     end
 
-    it 'SAD: should not authenticate an account with a bad password' do
-      get '/api/v1/accounts/authenticatingAnAccount/authenticate?password=guess.password'
+    it 'SAD: should not authenticate an account with wrong password' do
+      login_with(username: 'soumya.ray', password: 'guess.password')
       _(last_response.status).must_equal 401
     end
 
     it 'SAD: should not authenticate an account with an invalid username' do
-      get '/api/v1/accounts/randomuser/authenticate?password=authenticatingAnAccount.password'
+      login_with(username: 'randomuser', password: 'soumya.password')
       _(last_response.status).must_equal 401
     end
 
-    it 'BAD: should not authenticate an account with password' do
-      get '/api/v1/accounts/authenticatingAnAccount/authenticate'
+    it 'BAD: should not authenticate an account without password' do
+      login_with(username: 'soumya.ray', password: '')
       _(last_response.status).must_equal 401
     end
   end
