@@ -50,18 +50,4 @@ class PixelTrackerAPI < Sinatra::Base
     status 201
     headers('Location' => new_location)
   end
-
-  get '/api/v1/accounts/:username/campaigns/?' do
-    content_type 'application/json'
-
-    begin
-      username = params[:username]
-      account = Account.where(username: username).first
-      all_campaigns = FindAccountAllCampaigns.call(account: account)
-      JSON.pretty_generate(data: all_campaigns)
-    rescue => e
-      logger.info "FAILED to get campaigns for #{username}: #{e}"
-      halt 404
-    end
-  end
 end
