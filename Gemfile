@@ -7,6 +7,7 @@ gem 'json'
 gem 'sequel'
 gem 'rbnacl-libsodium'
 gem 'rack-ssl-enforcer'
+gem 'jose'
 
 group :development, :test do
   gem 'sqlite3'
