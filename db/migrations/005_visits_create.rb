@@ -4,7 +4,7 @@ Sequel.migration do
   change do
     create_table(:visits) do
       primary_key :id
-      foreign_key :tracker_id
+      foreign_key :tracker_id, :trackers, type: :uuid
 
       String :platform
       String :os

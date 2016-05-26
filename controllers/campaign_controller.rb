@@ -4,17 +4,13 @@ class PixelTrackerAPI < Sinatra::Base
       JSON.pretty_generate(data: Campaign.all)
   end
 
-  get '/api/v1/campaigns/:id' do
+  get '/api/v1/campaigns/:id/?' do
       content_type 'application/json'
 
       campaign = Campaign[params[:id]]
-      trackers = campaign ? campaign.trackers : []
-
-      if campaign
-          JSON.pretty_generate(data: campaign, relationships: trackers)
-      else
-          halt 404, "PROJECT NOT FOUND: #{params[:id]}"
-      end
+      halt 404, "PROJECT NOT FOUND: #{params[:id]}" unless campaign
+      trackers = campaign.trackers
+      JSON.pretty_generate(data: campaign, relationships: trackers)
   end
 
   post '/api/v1/campaigns/?' do

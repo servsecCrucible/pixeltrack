@@ -1,0 +1,6 @@
+db:migrate
+db:reseed
+db:reset
+db:seed
+key:generate
+spec

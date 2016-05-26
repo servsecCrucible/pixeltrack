@@ -32,11 +32,10 @@ describe 'Testing Tracker resource routes' do
 
   describe 'Getting trackers' do
     it 'HAPPY: should find existing tracker' do
-      tracker = CreateNewCampaign.call(label: 'Demo Campaign')
-                        .add_tracker(label: 'demo_tracker')
+      tracker = CreateNewCampaign.call(label: 'Demo Campaign').add_tracker(label: 'demo_tracker')
       get "/api/v1/campaigns/#{tracker.campaign_id}/trackers/#{tracker.id}"
       _(last_response.status).must_equal 200
-      parsed_tracker = JSON.parse(last_response.body)['data']['tracker']
+      parsed_tracker = JSON.parse(last_response.body)['data']
       _(parsed_tracker['type']).must_equal 'tracker'
     end
 
