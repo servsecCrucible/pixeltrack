@@ -23,6 +23,14 @@ namespace :db do
     Sequel::Migrator.run(DB, 'db/migrations', target: 0)
     Sequel::Migrator.run(DB, 'db/migrations')
   end
+
+  desc 'Populate the database with test values'
+  task :seed do
+    load './db/seeds/accounts_campaigns_trackers_visits.rb'
+  end
+
+  desc 'Reset and repopulate database'
+  task :reseed => [:reset, :seed]
 end
 
 desc 'Run all the tests'

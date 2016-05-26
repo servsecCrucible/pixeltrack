@@ -1,6 +1,8 @@
 require_relative 'create_new_account'
 require_relative 'create_new_tracker'
+require_relative 'create_tracker_for_campaign'
 require_relative 'create_new_campaign'
 require_relative 'create_campaign_for_owner'
+require_relative 'create_campaign_for_owner_with_contributors'
 require_relative 'find_account_all_campaigns'
 require_relative 'find_and_authenticate_account'
