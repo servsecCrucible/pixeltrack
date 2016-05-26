@@ -58,6 +58,7 @@ Create a configuration file to store database key
 
     config_env :development, :test do
       set 'DB_KEY', "generated key"
+      set 'JWK256', "JWK encryption key"
     end
 
 ## Testing
@@ -78,5 +79,11 @@ or use autoloading during development:
 
     $ bundle exec rerun rackup
 
+## Reset DB Operations
+
+    $ rake db:reset Dump everything
+    $ rake db:seed Populate the database with test values
+    $ rake db:reseed Dump DB and populate with test values
+    
 ## Location
 [Deployed instance](https://pixeltrack-api.herokuapp.com "PixelTrackAPP")
