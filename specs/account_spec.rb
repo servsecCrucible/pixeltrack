@@ -185,7 +185,12 @@ describe 'Testing Account resource routes' do
         my_camps << my_account.add_campaign(camp) if i < 2
       end
 
-      result = get "/api/v1/accounts/#{my_account.username}/campaigns"
+      _, auth_token = FindAndAuthenticateAccount.call(
+        username: 'super.man', password: 'mypassword')
+
+      result = get "/api/v1/accounts/#{my_account.username}/campaigns", nil,
+        { "HTTP_AUTHORIZATION" => "Bearer #{auth_token}" }
+
       _(result.status).must_equal 200
       camps = JSON.parse(result.body)
 
