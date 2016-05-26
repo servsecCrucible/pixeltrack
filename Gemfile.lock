@@ -60,6 +60,7 @@ GEM
       ripl-multi_line (>= 0.2.4)
       ripl-rack (>= 0.2.0)
       sinatra (>= 1.2.1)
+    useragent (0.16.7)
 
 PLATFORMS
   ruby
@@ -82,6 +83,7 @@ DEPENDENCIES
   sqlite3
   thin
   tux
+  useragent
 
 RUBY VERSION
    ruby 2.3.1p112
