@@ -9,6 +9,7 @@ gem 'rbnacl-libsodium'
 gem 'rack-ssl-enforcer'
 gem 'jose'
 gem 'useragent'
+gem 'rake'
 
 group :development, :test do
   gem 'sqlite3'
@@ -25,7 +26,6 @@ group :test do
   gem 'minitest'
   gem 'rack'
   gem 'rack-test'
-  gem 'rake'
 end
 
 group :production do
