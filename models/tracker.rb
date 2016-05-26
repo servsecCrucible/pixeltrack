@@ -24,6 +24,18 @@ class Tracker < Sequel::Model
             id: id,
             attributes: {
               label: label,
+              url: url,
+              visits: visits
+            }
+          },
+          options)
+  end
+
+  def to_json_lite(options = {})
+    JSON({  type: 'tracker',
+            id: id,
+            attributes: {
+              label: label,
               url: url
             }
           },

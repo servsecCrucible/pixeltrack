@@ -13,7 +13,7 @@ class PixelTrackerAPI < Sinatra::Base
         tracker = Tracker[params[:id]]
         halt(404, 'Tracker not found') unless tracker
         visits = tracker.visits
-        JSON.pretty_generate(data: tracker, relationships: visits)
+        JSON.pretty_generate(data: tracker)
     rescue => e
         status 400
         logger.info "FAILED to process GET tracker request: #{e.inspect}"

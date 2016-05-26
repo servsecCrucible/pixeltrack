@@ -7,9 +7,9 @@ class Visit < Sequel::Model
   set_allowed_columns :date
 
   def to_json(options = {})
-    JSON({  type: 'tracker',
+    JSON({  type: 'visit',
             id: id,
-            data: {
+            attributes: {
               platform: platform,
               os: os,
               date: date,
