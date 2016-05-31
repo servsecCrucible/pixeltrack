@@ -7,7 +7,7 @@ class PixelTrackerAPI < Sinatra::Base
     account = Account.where(username: username).first
 
     if account.is_a? Account
-      campaigns = FindAllAccountCampaigns.call(account: account)
+      campaigns = FindAllAccountCampaigns.call(id: account.id)
       JSON.pretty_generate(data: account, relationships: campaigns)
     else
       halt 404, "USER NOT FOUND: #{username}"
