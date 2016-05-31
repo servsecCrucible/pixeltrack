@@ -1,9 +1,7 @@
 class PixelTrackerAPI < Sinatra::Base
   get '/api/v1/campaigns/?' do
       content_type 'application/json'
-      JSON.pretty_generate(data: Campaign.all.map do |campaign|
-        JSON.parse(campaign.to_json_lite)
-      end )
+      JSON.pretty_generate(data: Campaign.all)
   end
 
   get '/api/v1/campaigns/:id/?' do
@@ -12,16 +10,13 @@ class PixelTrackerAPI < Sinatra::Base
       campaign = Campaign[params[:id]]
       halt 404, "PROJECT NOT FOUND: #{params[:id]}" unless campaign
       trackers = campaign.trackers
-      JSON.pretty_generate(data: JSON.parse(campaign.to_json_lite),
-        relationships: (trackers.map do |tracker|
-          JSON.parse(tracker.to_json_lite)
-        end))
+      JSON.pretty_generate(data: campaign, relationships: trackers)
   end
 
   post '/api/v1/campaigns/?' do
       begin
           new_data = JSON.parse(request.body.read)
-          saved_campaign = CreateNewCampaign.call(label: new_data['label'])
+          saved_campaign = CreateCampaign.call(label: new_data['label'])
       rescue => e
           logger.info "FAILED to create new campaign: #{e.inspect}"
           halt 400

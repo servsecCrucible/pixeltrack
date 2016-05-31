@@ -34,7 +34,7 @@ describe 'Testing Account resource routes' do
   describe 'Testing unit level properties of accounts' do
     before do
       @original_password = 'supermansucks'
-      @account = CreateNewAccount.call(
+      @account = CreateAccount.call(
         username: 'bat.man',
         email: 'batman@batcave.gotham.dc',
         password: @original_password)
@@ -54,7 +54,7 @@ describe 'Testing Account resource routes' do
 
   describe 'Finding an existing account' do
     it 'HAPPY: should find an existing account' do
-      new_account = CreateNewAccount.call(
+      new_account = CreateAccount.call(
         username: 'test.name',
         email: 'test@email.com', password: 'mypassword')
       new_campaigns = (1..3).map do |i|
@@ -79,7 +79,7 @@ describe 'Testing Account resource routes' do
 
   describe 'Creating new campaign for account owner' do
     before do
-      @account = CreateNewAccount.call(
+      @account = CreateAccount.call(
         username: 'soumya.ray',
         email: 'sray@nthu.edu.tw',
         password: 'mypassword')
@@ -131,7 +131,7 @@ describe 'Testing Account resource routes' do
     end
 
     before do
-      @account = CreateNewAccount.call(
+      @account = CreateAccount.call(
         username: 'soumya.ray',
         email: 'sray@nthu.edu.tw',
         password: 'soumya.password')
@@ -163,12 +163,12 @@ describe 'Testing Account resource routes' do
 
   describe 'Get index of all campaign for an account' do
     it 'HAPPY: should find all campaigns for an account' do
-      my_account = CreateNewAccount.call(
+      my_account = CreateAccount.call(
         username: 'super.man',
         email: 'sman@nthu.edu.tw',
         password: 'mypassword')
 
-      other_account = CreateNewAccount.call(
+      other_account = CreateAccount.call(
         username: 'wonderwoman',
         email: 'wonder@nthu.edu.tw',
         password: 'wonderpassword')
@@ -185,7 +185,7 @@ describe 'Testing Account resource routes' do
         my_camps << my_account.add_campaign(camp) if i < 2
       end
 
-      _, auth_token = FindAndAuthenticateAccount.call(
+      _, auth_token = AuthenticateAccount.call(
         username: 'super.man', password: 'mypassword')
 
       result = get "/api/v1/accounts/#{my_account.username}/campaigns", nil,

@@ -7,7 +7,7 @@ class PixelTrackerAPI < Sinatra::Base
       halt 401 unless authorized_account?(env, params[:username])
       username = params[:username]
       account = Account.where(username: username).first
-      all_campaigns = FindAccountAllCampaigns.call(account: account)
+      all_campaigns = FindAllAccountCampaigns.call(account: account)
       JSON.pretty_generate(data: all_campaigns)
     rescue => e
       logger.info "FAILED to get campaigns for #{username}: #{e}"
