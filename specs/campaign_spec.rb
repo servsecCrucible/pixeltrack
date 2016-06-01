@@ -8,45 +8,70 @@ describe 'Testing Campaign resource routes' do
     Visit.dataset.destroy
   end
 
-  describe 'Creating new Campaigns' do
-    it 'HAPPY: should create a new unique campaign' do
-      req_header = { 'CONTENT_TYPE' => 'application/json' }
+  describe 'create campaigns for accounts' do
+    before do
+      @account = CreateAccount.call(
+        username: 'add.campaigns',
+        email: 'add@campaign.dc',
+        password: 'addcampaignpassword')
+    end
+
+    it 'HAPPY: should create a campaign for an account' do
+      _, auth_token = AuthenticateAccount.call(
+        username: @account.username, password: 'addcampaignpassword')
+      req_header = {
+        'HTTP_AUTHORIZATION' => "Bearer #{auth_token}",
+        'CONTENT_TYPE' => 'application/json'
+      }
       req_body = { label: 'Demo Campaign' }.to_json
-      post '/api/v1/campaigns/', req_body, req_header
+      post "/api/v1/accounts/#{@account.username}/owned_campaigns",
+        req_body, req_header
       _(last_response.status).must_equal 201
       _(last_response.location).must_match(%r{http://})
     end
+
+    it 'Sad: should not create a campaign for an account with no auth_token' do
+      req_header = {
+        'CONTENT_TYPE' => 'application/json'
+      }
+      req_body = { label: 'Demo Campaign' }.to_json
+      post "/api/v1/accounts/#{@account.username}/owned_campaigns",
+        req_body, req_header
+      _(last_response.status).must_equal 401
+    end
   end
 
-  describe 'Finding existing campaigns' do
-    it 'HAPPY: should find an existing campaign' do
-      new_campaign = CreateNewCampaign.call(label: 'Demo Campaign')
-      new_trackers = (1..3).map do |i|
-        new_campaign.add_tracker(label: "tracker_file#{i}")
-      end
 
-      get "/api/v1/campaigns/#{new_campaign.id}"
+  describe 'Finding existing campaigns' do
+    before do
+      @account = CreateAccount.call(
+        username: 'find.campaigns',
+        email: 'find@campaign.dc',
+        password: 'findcampaignpassword')
+      @campaign = CreateCampaignForOwner.call(
+        account: @account, label: 'Demo Campaign')
+      @trackers = (1..3).map do |i|
+        @campaign.add_tracker(label: "tracker_file#{i}")
+      end
+    end
+
+    it 'HAPPY: should find an existing campaign' do
+      _, auth_token = AuthenticateAccount.call(
+        username: 'find.campaigns', password: 'findcampaignpassword')
+      get "/api/v1/campaigns/#{@campaign.id}", nil,
+        { "HTTP_AUTHORIZATION" => "Bearer #{auth_token}" }
       _(last_response.status).must_equal 200
 
       results = JSON.parse(last_response.body)
-      _(results['data']['id']).must_equal new_campaign.id
+      _(results['data']['id']).must_equal @campaign.id
       3.times do |i|
-        _(results['relationships'][i]['id']).must_equal new_trackers[i].id
+        _(results['relationships'][i]['id']).must_equal @trackers[i].id
       end
     end
 
     it 'SAD: should not find non-existent campaigns' do
       get "/api/v1/campaigns/#{invalid_id(Campaign)}"
-      _(last_response.status).must_equal 404
-    end
-  end
-
-  describe 'Getting an index of existing campaigns' do
-    it 'HAPPY: should find list of existing campaigns' do
-      (1..5).each { |i| CreateNewCampaign.call(label: "Campaign #{i}") }
-      result = get '/api/v1/campaigns'
-      camps = JSON.parse(result.body)
-      _(camps['data'].count).must_equal 5
+      _(last_response.status).must_equal 401
     end
   end
 end

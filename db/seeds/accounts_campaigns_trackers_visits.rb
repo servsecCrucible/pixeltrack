@@ -1,13 +1,13 @@
 # Create accounts
-jherez = CreateNewAccount.call( username: 'jherez',
+jherez = CreateAccount.call( username: 'jherez',
                                 email: 'jherez@nthu.edu.tw',
                                 password: 'jherezpassword')
 
-nicholas = CreateNewAccount.call( username: 'nicholas',
+nicholas = CreateAccount.call( username: 'nicholas',
                                   email: 'nicholas@nthu.edu.tw',
                                   password: 'nicholaspassword')
 
-renaud = CreateNewAccount.call( username: 'renaud',
+renaud = CreateAccount.call( username: 'renaud',
                                 email: 'renaud@nthu.edu.tw',
                                 password: 'renaudpassword')
 

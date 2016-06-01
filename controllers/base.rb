@@ -14,14 +14,22 @@ class PixelTrackerAPI < Sinatra::Base
     account_payload = JSON.load JWE.decrypt(auth_token)
     (scheme =~ /^Bearer$/i) ? account_payload : nil
   end
-  
+
   def authorized_account?(env, username)
     account = authenticated_account(env)
     account['username'] == username
   rescue
     false
   end
-  
+
+  def affiliated_campaign(env, campaign_id)
+    account = authenticated_account(env)
+    all_campaigns = FindAllAccountCampaigns.call(id: account['id'])
+    all_campaigns.select { |camp| camp.id == campaign_id.to_i }.first
+  rescue
+    nil
+  end
+
   before do
     host_url = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
     @request_url = URI.join(host_url, request.path.to_s)

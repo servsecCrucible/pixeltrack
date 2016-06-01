@@ -27,24 +27,13 @@ class Campaign < Sequel::Model
   # end
 
   def to_json(options = {})
-  	JSON({ type: 'campaign',
-  	       id: id,
-           attributes: {
-             label: label,
-             trackers: trackers
-           }
-  	  },
-  		options)
-  end
-
-  def to_json_lite(options = {})
-    JSON({ type: 'campaign',
-  	       id: id,
-           attributes: {
-             label: label,
-           }
-  	  },
-  		options)
+    JSON({  type: 'campaign',
+            id: id,
+            attributes: {
+              label: label,
+            }
+          },
+          options)
   end
 
 end

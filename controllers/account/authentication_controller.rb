@@ -4,7 +4,7 @@ class PixelTrackerAPI < Sinatra::Base
     content_type 'application/json'
 
     credentials = JSON.parse(request.body.read)
-    account, auth_token = FindAndAuthenticateAccount.call(
+    account, auth_token = AuthenticateAccount.call(
       username: credentials['username'], password: credentials['password'])
 
     if account

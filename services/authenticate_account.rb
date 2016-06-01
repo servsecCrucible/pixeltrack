@@ -1,5 +1,5 @@
 # Find account and check password
-class FindAndAuthenticateAccount
+class AuthenticateAccount
   def self.call(username:, password:)
     return nil unless username && password
 
