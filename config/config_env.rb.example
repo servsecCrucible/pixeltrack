@@ -5,4 +5,5 @@
 config_env :development, :test do
   set 'DB_KEY', "[database encryption key in base64 url safe encoding]"
   set 'JWK256', "[JWK encryption key]"
+  set 'API_HOST', 'http://localhost:9292'
 end

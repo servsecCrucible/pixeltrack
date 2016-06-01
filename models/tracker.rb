@@ -19,6 +19,10 @@ class Tracker < Sequel::Model
     SecureDB.decrypt(label_encrypted)
   end
 
+  def url
+    ENV['API_HOST'] + '/' + id + '.png'
+  end
+
   def to_json(options = {})
     JSON({  type: 'tracker',
             id: id,
