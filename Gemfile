@@ -10,6 +10,7 @@ gem 'rack-ssl-enforcer'
 gem 'jose'
 gem 'useragent'
 gem 'rake'
+gem 'http'
 
 group :development, :test do
   gem 'sqlite3'
@@ -20,6 +21,7 @@ group :development do
   gem 'rerun'
   gem 'tux'
   gem 'hirb'
+  gem 'rake'
 end
 
 group :test do
