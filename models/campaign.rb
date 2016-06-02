@@ -6,15 +6,15 @@ class Campaign < Sequel::Model
   set_allowed_columns :label
 
   one_to_many :trackers
-  many_to_one :owner, class: :Account
+  many_to_one :owner, class: :BaseAccount
   many_to_many :contributors,
-               class: :Account, join_table: :accounts_campaigns,
+               class: :BaseAccount, join_table: :base_accounts_campaigns,
                left_key: :campaign_id, right_key: :contributor_id
 
   plugin :association_dependencies, trackers: :destroy
 
   def before_destroy
-    DB[:accounts_campaigns].where(campaign_id: id).delete
+    DB[:base_accounts_campaigns].where(campaign_id: id).delete
     super
   end
 

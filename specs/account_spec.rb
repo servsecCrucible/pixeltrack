@@ -1,10 +1,10 @@
-require_relative './spec_helper'
+require_relative 'spec_helper'
 
 describe 'Testing Account resource routes' do
   before do
     Tracker.dataset.destroy
     Campaign.dataset.destroy
-    Account.dataset.destroy
+    BaseAccount.dataset.destroy
     Visit.dataset.destroy
   end
 
@@ -60,8 +60,11 @@ describe 'Testing Account resource routes' do
       new_campaigns = (1..3).map do |i|
         new_account.add_owned_campaign(label: "Campaign #{i}")
       end
+      _, auth_token = AuthenticateAccount.call(
+        username: 'test.name', password: 'mypassword')
 
-      get "/api/v1/accounts/#{new_account.username}"
+      get "/api/v1/accounts/#{new_account.username}", nil,
+        { "HTTP_AUTHORIZATION" => "Bearer #{auth_token}" }
       _(last_response.status).must_equal 200
 
       results = JSON.parse(last_response.body)
@@ -73,7 +76,7 @@ describe 'Testing Account resource routes' do
 
     it 'SAD: should not find non-existent accounts' do
       get "/api/v1/accounts/I-DO-NOT-EXIST"
-      _(last_response.status).must_equal 404
+      _(last_response.status).must_equal 401
     end
   end
 
@@ -83,10 +86,14 @@ describe 'Testing Account resource routes' do
         username: 'soumya.ray',
         email: 'sray@nthu.edu.tw',
         password: 'mypassword')
+      _, @auth_token = AuthenticateAccount.call(
+        username: 'soumya.ray', password: 'mypassword')
     end
 
     it 'HAPPY: should create a new unique campaign for account' do
-      req_header = { 'CONTENT_TYPE' => 'application/json' }
+      req_header = {
+        'CONTENT_TYPE' => 'application/json',
+        "HTTP_AUTHORIZATION" => "Bearer #{@auth_token}" }
       req_body = { label: 'Demo Campaign' }.to_json
       post "/api/v1/accounts/#{@account.username}/campaigns/",
            req_body, req_header
@@ -95,7 +102,9 @@ describe 'Testing Account resource routes' do
     end
 
     it 'SAD: should not create campaigns with duplicate names' do
-      req_header = { 'CONTENT_TYPE' => 'application/json' }
+      req_header = {
+        'CONTENT_TYPE' => 'application/json',
+        "HTTP_AUTHORIZATION" => "Bearer #{@auth_token}" }
       req_body = { name: 'Demo Campaign' }.to_json
       2.times do
         post "/api/v1/accounts/#{@account.username}/campaigns/",

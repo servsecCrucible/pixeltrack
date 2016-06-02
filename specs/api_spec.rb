@@ -1,4 +1,4 @@
-require_relative './spec_helper'
+require_relative 'spec_helper'
 
 describe 'Test root route' do
   it 'should find the root route' do

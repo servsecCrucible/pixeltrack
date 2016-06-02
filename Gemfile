@@ -10,6 +10,7 @@ gem 'rack-ssl-enforcer'
 gem 'jose'
 gem 'useragent'
 gem 'rake'
+gem 'http'
 
 group :development, :test do
   gem 'sqlite3'
