@@ -1,10 +1,10 @@
-require_relative './spec_helper'
+require_relative 'spec_helper'
 
 describe 'Testing Campaign resource routes' do
   before do
     Tracker.dataset.destroy
     Campaign.dataset.destroy
-    Account.dataset.destroy
+    BaseAccount.dataset.destroy
     Visit.dataset.destroy
   end
 

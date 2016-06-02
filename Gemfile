@@ -21,7 +21,6 @@ group :development do
   gem 'rerun'
   gem 'tux'
   gem 'hirb'
-  gem 'rake'
 end
 
 group :test do

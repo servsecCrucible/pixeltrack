@@ -2,12 +2,10 @@
 class PixelTrackerAPI < Sinatra::Base
   get '/api/v1/accounts/:username/?' do
     content_type 'application/json'
-
-    username = params[:username]
-    account = Account.where(username: username).first
-
-    if account.is_a? Account
-      campaigns = FindAllAccountCampaigns.call(id: account.id)
+    halt 401 unless authorized_account?(env, params[:username])
+    account = authenticated_account(env)
+    if account
+      campaigns = FindAllAccountCampaigns.call(id: account['id'])
       JSON.pretty_generate(data: account, relationships: campaigns)
     else
       halt 404, "ACCOUNT NOT FOUND: #{username}"
@@ -34,10 +32,11 @@ class PixelTrackerAPI < Sinatra::Base
 
   post '/api/v1/accounts/:username/campaigns/?' do
     begin
-      username = params[:username]
+      halt 401 unless authorized_account?(env, params[:username])
+      account = authenticated_account(env)
       new_data = JSON.parse(request.body.read)
 
-      account = Account.where(username: username).first
+      account = Account[account['id']]
       saved_campaign = CreateCampaignForOwner.call( account: account,
                                                     label: new_data['label'])
     rescue => e
