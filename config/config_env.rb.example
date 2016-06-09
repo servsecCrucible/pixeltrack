@@ -4,9 +4,15 @@
 # Fill in Github client ID and secret from Github OAuth settings
 
 config_env :development, :test do
-  set 'DB_KEY', "[database encryption key in base64 url safe encoding]"
-  set 'JWK256', "[JWK encryption key]"
+  set 'DB_KEY', '[database encryption key in base64 url safe encoding]'
+  set 'JWK256', '[JWK encryption key]'
   set 'API_HOST', 'http://localhost:9292'
   set 'GH_CLIENT_ID', '...'
   set 'GH_CLIENT_SECRET', '...'
+  set 'APP_PUBLIC_KEY', '[APP asymmetric Public key]'
+end
+
+config_env :test do
+  # following is to recreate signed app requests
+  set 'APP_SECRET_KEY', '[Use dev/test secret key from client application]'
 end

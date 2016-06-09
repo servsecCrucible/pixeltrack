@@ -14,11 +14,9 @@ class PixelTrackerAPI < Sinatra::Base
 
   post '/api/v1/accounts/?' do
     begin
-      data = JSON.parse(request.body.read)
-      new_account = CreateAccount.call(
-        username: data['username'],
-        email: data['email'],
-        password: data['password'])
+      new_account = CreateAccount.call(request.body.read)
+    rescue ClientNotAuthorized => e
+      halt 401, e.to_s
     rescue => e
       logger.info "FAILED to create new account: #{e.inspect}"
       halt 400

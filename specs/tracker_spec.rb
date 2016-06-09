@@ -10,14 +10,14 @@ describe 'Testing Tracker resource routes' do
 
   describe 'Creating new trackers for campaigns' do
     before do
-      @account = CreateAccount.call(
-        username: 'add.tracker',
-        email: 'add@tracker.dc',
-        password: 'addtrackerpassword')
+      @account = create_client_account({
+        'username' => 'add.tracker',
+        'email' => 'add@tracker.dc',
+        'password' => 'addtrackerpassword'})
       @existing_campaign = CreateCampaignForOwner.call(
         account: @account, label: 'Demo Campaign')
-      _, @auth_token = AuthenticateAccount.call(
-        username: @account.username, password: 'addtrackerpassword')
+      @auth_token = authorized_account_token({
+        'username' => @account.username, 'password' => 'addtrackerpassword'})
     end
 
     it 'HAPPY: should add a new tracker for an existing campaign' do
@@ -56,15 +56,15 @@ describe 'Testing Tracker resource routes' do
 
   describe 'Getting trackers' do
     it 'HAPPY: should find existing tracker' do
-      account = CreateAccount.call(
-        username: 'find.tracker',
-        email: 'find@tracker.dc',
-        password: 'findtrackerpassword')
+      account = create_client_account({
+        'username' => 'find.tracker',
+        'email' => 'find@tracker.dc',
+        'password' => 'findtrackerpassword'})
       tracker = CreateCampaignForOwner
         .call(account: account, label: 'Demo Campaign')
         .add_tracker(label: 'demo_tracker')
-      _, auth_token = AuthenticateAccount.call(
-        username: account.username, password: 'findtrackerpassword')
+      auth_token = authorized_account_token({
+        'username' => account.username, 'password' => 'findtrackerpassword'})
       get "/api/v1/campaigns/#{tracker.campaign_id}/trackers/#{tracker.id}",
         nil, {'HTTP_AUTHORIZATION' => "Bearer #{auth_token}"}
       _(last_response.status).must_equal 200

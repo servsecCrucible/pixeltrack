@@ -10,15 +10,15 @@ describe 'Testing Campaign resource routes' do
 
   describe 'create campaigns for accounts' do
     before do
-      @account = CreateAccount.call(
-        username: 'add.campaigns',
-        email: 'add@campaign.dc',
-        password: 'addcampaignpassword')
+      @account = create_client_account({
+        'username' => 'add.campaigns',
+        'email' => 'add@campaign.dc',
+        'password' => 'addcampaignpassword'})
     end
 
     it 'HAPPY: should create a campaign for an account' do
-      _, auth_token = AuthenticateAccount.call(
-        username: @account.username, password: 'addcampaignpassword')
+      auth_token = authorized_account_token({
+        'username' => @account.username, 'password' => 'addcampaignpassword'})
       req_header = {
         'HTTP_AUTHORIZATION' => "Bearer #{auth_token}",
         'CONTENT_TYPE' => 'application/json'
@@ -44,10 +44,10 @@ describe 'Testing Campaign resource routes' do
 
   describe 'Finding existing campaigns' do
     before do
-      @account = CreateAccount.call(
-        username: 'find.campaigns',
-        email: 'find@campaign.dc',
-        password: 'findcampaignpassword')
+      @account = create_client_account({
+        'username' => 'find.campaigns',
+        'email' => 'find@campaign.dc',
+        'password' => 'findcampaignpassword'})
       @campaign = CreateCampaignForOwner.call(
         account: @account, label: 'Demo Campaign')
       @trackers = (1..3).map do |i|
@@ -56,8 +56,8 @@ describe 'Testing Campaign resource routes' do
     end
 
     it 'HAPPY: should find an existing campaign' do
-      _, auth_token = AuthenticateAccount.call(
-        username: 'find.campaigns', password: 'findcampaignpassword')
+      auth_token = authorized_account_token({
+        'username' => 'find.campaigns', 'password' => 'findcampaignpassword'})
       get "/api/v1/campaigns/#{@campaign.id}", nil,
         { "HTTP_AUTHORIZATION" => "Bearer #{auth_token}" }
       _(last_response.status).must_equal 200

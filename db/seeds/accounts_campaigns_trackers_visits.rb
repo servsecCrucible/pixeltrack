@@ -1,15 +1,18 @@
 # Create accounts
-jherez = CreateAccount.call( username: 'jherez',
-                                email: 'jherez@nthu.edu.tw',
-                                password: 'jherezpassword')
+jherez = CreateAccount.create_new_account({
+  'username' => 'jherez',
+  'email' => 'jherez@nthu.edu.tw',
+  'password' => 'jherezpassword'})
 
-nicholas = CreateAccount.call( username: 'nicholas',
-                                  email: 'nicholas@nthu.edu.tw',
-                                  password: 'nicholaspassword')
+nicholas = CreateAccount.create_new_account({
+  'username' => 'nicholas',
+  'email' => 'nicholas@nthu.edu.tw',
+  'password' => 'nicholaspassword'})
 
-renaud = CreateAccount.call( username: 'renaud',
-                                email: 'renaud@nthu.edu.tw',
-                                password: 'renaudpassword')
+renaud = CreateAccount.create_new_account({
+  'username' => 'renaud',
+  'email' => 'renaud@nthu.edu.tw',
+  'password' => 'renaudpassword'})
 
 campaignJR = CreateCampaignForOwnerWithContributors.call(
   owner: jherez, label: 'Jherez & Renaud campaign', contributors: [renaud])

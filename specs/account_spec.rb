@@ -9,24 +9,39 @@ describe 'Testing Account resource routes' do
   end
 
   describe 'Creating new account' do
+    before do
+      @registration = {
+        'username' => 'test.name',
+        'password' => 'mypass',
+        'email' => 'test@email.com' }
+      @req_body = client_signed(@registration)
+    end
+
     it 'HAPPY: should create a new unique account' do
       req_header = { 'CONTENT_TYPE' => 'application/json' }
-      req_body = { username: 'test.name',
-                   password: 'mypass',
-                   email: 'test@email.com' }.to_json
-      post '/api/v1/accounts/', req_body, req_header
+      post '/api/v1/accounts/', @req_body, req_header
       _(last_response.status).must_equal 201
       _(last_response.location).must_match(%r{http://})
     end
 
     it 'SAD: should not create accounts with duplicate usernames' do
       req_header = { 'CONTENT_TYPE' => 'application/json' }
-      req_body = { username: 'test.name',
-                   password: 'mypass',
-                   email: 'test@email.com' }.to_json
+      registration_duplicate = {
+        'username' => 'test.name',
+        'password' => 'mypassword',
+        'email' => 'testduplicate@email.com' }
+      req_body = client_signed(registration_duplicate)
       post '/api/v1/accounts/', req_body, req_header
       post '/api/v1/accounts/', req_body, req_header
       _(last_response.status).must_equal 400
+      _(last_response.location).must_be_nil
+    end
+
+    it 'BAD: should not create account unless requested from authorized app' do
+      req_header = { 'CONTENT_TYPE' => 'application/json' }
+      req_body_not_signed = @registration.to_json
+      post '/api/v1/accounts/', req_body_not_signed, req_header
+      _(last_response.status).must_equal 401
       _(last_response.location).must_be_nil
     end
   end
@@ -34,10 +49,10 @@ describe 'Testing Account resource routes' do
   describe 'Testing unit level properties of accounts' do
     before do
       @original_password = 'supermansucks'
-      @account = CreateAccount.call(
-        username: 'bat.man',
-        email: 'batman@batcave.gotham.dc',
-        password: @original_password)
+      @account = create_client_account({
+        'username' => 'bat.man',
+        'email' => 'batman@batcave.gotham.dc',
+        'password' => @original_password})
     end
 
     it 'HAPPY: should hash the password' do
@@ -54,14 +69,15 @@ describe 'Testing Account resource routes' do
 
   describe 'Finding an existing account' do
     it 'HAPPY: should find an existing account' do
-      new_account = CreateAccount.call(
-        username: 'test.name',
-        email: 'test@email.com', password: 'mypassword')
+      new_account = create_client_account({
+        'username' => 'test.name',
+        'email' => 'test@email.com',
+        'password' => 'mypassword'})
       new_campaigns = (1..3).map do |i|
         new_account.add_owned_campaign(label: "Campaign #{i}")
       end
-      _, auth_token = AuthenticateAccount.call(
-        username: 'test.name', password: 'mypassword')
+      auth_token = authorized_account_token({
+        'username' => 'test.name', 'password' => 'mypassword'})
 
       get "/api/v1/accounts/#{new_account.username}", nil,
         { "HTTP_AUTHORIZATION" => "Bearer #{auth_token}" }
@@ -82,12 +98,12 @@ describe 'Testing Account resource routes' do
 
   describe 'Creating new campaign for account owner' do
     before do
-      @account = CreateAccount.call(
-        username: 'soumya.ray',
-        email: 'sray@nthu.edu.tw',
-        password: 'mypassword')
-      _, @auth_token = AuthenticateAccount.call(
-        username: 'soumya.ray', password: 'mypassword')
+      @account = create_client_account({
+        'username' => 'soumya.ray',
+        'email' => 'sray@nthu.edu.tw',
+        'password' => 'mypassword'})
+      @auth_token = authorized_account_token({
+        'username' => 'soumya.ray', 'password' => 'mypassword'})
     end
 
     it 'HAPPY: should create a new unique campaign for account' do
@@ -134,16 +150,15 @@ describe 'Testing Account resource routes' do
     # TODO: only allow authorized client apps (to prevent brute force checks)
     def login_with(username:, password:)
       req_header = { 'CONTENT_TYPE' => 'application/json' }
-      req_body = { username: username,
-                   password: password }.to_json
+      req_body = client_signed({'username' => username, 'password' => password})
       post '/api/v1/accounts/authenticate', req_body, req_header
     end
 
     before do
-      @account = CreateAccount.call(
-        username: 'soumya.ray',
-        email: 'sray@nthu.edu.tw',
-        password: 'soumya.password')
+      @account = create_client_account({
+        'username' => 'soumya.ray',
+        'email' => 'sray@nthu.edu.tw',
+        'password' => 'soumya.password'})
     end
 
     it 'HAPPY: should be able to authenticate a real account' do
@@ -164,6 +179,13 @@ describe 'Testing Account resource routes' do
       _(last_response.status).must_equal 401
     end
 
+    it 'BAD: should not authenticate an account without app signature' do
+      req_header = { 'CONTENT_TYPE' => 'application/json' }
+      req_body = {'username' => 'soumya.ray', 'password' => 'soumya.password'}.to_json
+      post '/api/v1/accounts/authenticate', req_body, req_header
+      _(last_response.status).must_equal 401
+    end
+
     it 'BAD: should not authenticate an account without password' do
       login_with(username: 'soumya.ray', password: '')
       _(last_response.status).must_equal 401
@@ -172,15 +194,15 @@ describe 'Testing Account resource routes' do
 
   describe 'Get index of all campaign for an account' do
     it 'HAPPY: should find all campaigns for an account' do
-      my_account = CreateAccount.call(
-        username: 'super.man',
-        email: 'sman@nthu.edu.tw',
-        password: 'mypassword')
+      my_account = create_client_account({
+        'username' => 'super.man',
+        'email' => 'sman@nthu.edu.tw',
+        'password' => 'mypassword'})
 
-      other_account = CreateAccount.call(
-        username: 'wonderwoman',
-        email: 'wonder@nthu.edu.tw',
-        password: 'wonderpassword')
+      other_account = create_client_account({
+        'username' => 'wonderwoman',
+        'email' => 'wonder@nthu.edu.tw',
+        'password' => 'wonderpassword'})
 
       my_camps = []
       3.times do |i|
@@ -194,8 +216,8 @@ describe 'Testing Account resource routes' do
         my_camps << my_account.add_campaign(camp) if i < 2
       end
 
-      _, auth_token = AuthenticateAccount.call(
-        username: 'super.man', password: 'mypassword')
+      auth_token = authorized_account_token({
+        'username' => 'super.man', 'password' => 'mypassword'})
 
       result = get "/api/v1/accounts/#{my_account.username}/campaigns", nil,
         { "HTTP_AUTHORIZATION" => "Bearer #{auth_token}" }
