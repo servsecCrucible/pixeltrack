@@ -40,6 +40,7 @@ class PixelTrackerAPI < Sinatra::Base
   end
 
   get '/api/v1/?' do
+    content_type 'application/json'
     apidoc = {
       '/api/v1/' => {
         'get' => {

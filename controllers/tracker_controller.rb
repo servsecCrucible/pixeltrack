@@ -24,6 +24,7 @@ class PixelTrackerAPI < Sinatra::Base
   end
 
   post '/api/v1/campaigns/:campaign_id/trackers/?' do
+    content_type 'application/json'
     begin
         campaign = affiliated_campaign(env, params[:campaign_id])
         halt 401, 'Not authorized, or tracker might not exist' unless campaign
@@ -35,7 +36,6 @@ class PixelTrackerAPI < Sinatra::Base
     end
 
     status 201
-    new_location = URI.join(@request_url.to_s + '/', saved_tracker.id.to_s).to_s
-    headers('Location' => new_location)
+    saved_tracker.to_json
   end
 end
