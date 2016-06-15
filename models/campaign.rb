@@ -26,11 +26,16 @@ class Campaign < Sequel::Model
   #   @label = decrypt(label_encrypted)
   # end
 
+  def nb_visits
+    trackers.map { |tracker| tracker.visits.size}.inject(0, :+)
+  end
+
   def to_json(options = {})
     JSON({  type: 'campaign',
             id: id,
             attributes: {
               label: label,
+              nb_visits: nb_visits
             }
           },
           options)
