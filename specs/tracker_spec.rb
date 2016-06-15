@@ -29,7 +29,7 @@ describe 'Testing Tracker resource routes' do
       post "/api/v1/campaigns/#{@existing_campaign.id}/trackers",
            req_body, req_header
       _(last_response.status).must_equal 201
-      _(last_response.location).must_match(%r{http://})
+      _(last_response.body).wont_be_empty
     end
 
     it 'SAD: should not add a tracker for non-existant campaign' do

@@ -27,7 +27,7 @@ describe 'Testing Campaign resource routes' do
       post "/api/v1/accounts/#{@account.username}/owned_campaigns",
         req_body, req_header
       _(last_response.status).must_equal 201
-      _(last_response.location).must_match(%r{http://})
+      _(last_response.body).wont_be_empty 
     end
 
     it 'Sad: should not create a campaign for an account with no auth_token' do

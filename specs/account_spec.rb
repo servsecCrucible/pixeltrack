@@ -21,7 +21,7 @@ describe 'Testing Account resource routes' do
       req_header = { 'CONTENT_TYPE' => 'application/json' }
       post '/api/v1/accounts/', @req_body, req_header
       _(last_response.status).must_equal 201
-      _(last_response.location).must_match(%r{http://})
+      _(last_response.body).wont_be_empty
     end
 
     it 'SAD: should not create accounts with duplicate usernames' do
@@ -111,10 +111,10 @@ describe 'Testing Account resource routes' do
         'CONTENT_TYPE' => 'application/json',
         "HTTP_AUTHORIZATION" => "Bearer #{@auth_token}" }
       req_body = { label: 'Demo Campaign' }.to_json
-      post "/api/v1/accounts/#{@account.username}/campaigns/",
+      post "/api/v1/accounts/#{@account.username}/owned_campaigns/",
            req_body, req_header
       _(last_response.status).must_equal 201
-      _(last_response.location).must_match(%r{http://})
+      _(last_response.body).wont_be_empty
     end
 
     it 'SAD: should not create campaigns with duplicate names' do
@@ -123,7 +123,7 @@ describe 'Testing Account resource routes' do
         "HTTP_AUTHORIZATION" => "Bearer #{@auth_token}" }
       req_body = { name: 'Demo Campaign' }.to_json
       2.times do
-        post "/api/v1/accounts/#{@account.username}/campaigns/",
+        post "/api/v1/accounts/#{@account.username}/owned_campaigns/",
              req_body, req_header
       end
       _(last_response.status).must_equal 400

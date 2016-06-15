@@ -1,6 +1,7 @@
 # Sinatra Application Controllers
 class PixelTrackerAPI < Sinatra::Base
   post '/api/v1/accounts/:username/owned_campaigns/?' do
+    content_type 'application/json'
     begin
       halt 401 unless authorized_account?(env, params[:username])
       account = authenticated_account(env)
@@ -12,10 +13,8 @@ class PixelTrackerAPI < Sinatra::Base
       halt 400
     end
 
-    new_location = URI.join(@request_url.to_s + '/', saved_campaign.id.to_s).to_s
-
     status 201
-    headers('Location' => new_location)
+    saved_campaign.to_json
   end
 
   get '/api/v1/accounts/:username/owned_campaigns/?' do
