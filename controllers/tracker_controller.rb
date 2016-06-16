@@ -38,4 +38,21 @@ class PixelTrackerAPI < Sinatra::Base
     status 201
     saved_tracker.to_json
   end
+
+  delete '/api/v1/campaigns/:campaign_id/trackers/:id/?' do
+    content_type 'application/json'
+    begin
+        campaign = affiliated_campaign(env, params[:campaign_id])
+        halt 401, 'Not authorized, or tracker might not exist' unless campaign
+        tracker = Tracker
+          .where(campaign_id: params[:campaign_id], id: params[:id])
+          .first
+        halt 401, 'Not authorized, or tracker might not exist' unless tracker
+        tracker.delete
+    rescue => e
+        logger.info "FAILED to remove tracker: #{e.inspect}"
+        halt 400
+    end
+    status 200
+  end
 end

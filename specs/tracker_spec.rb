@@ -96,4 +96,49 @@ describe 'Testing Tracker resource routes' do
       _(last_response.status).must_equal 401
     end
   end
+
+  describe 'Deleting tracker' do
+    before do
+      @account = create_client_account({
+        'username' => 'delete.tracker',
+        'email' => 'delete@tracker.dc',
+        'password' => 'deletetrackerpassword'})
+      @campaign = CreateCampaignForOwner.call(
+        account: @account, label: 'Demo Campaign')
+      @auth_token = authorized_account_token({
+        'username' => @account.username, 'password' => 'deletetrackerpassword'})
+      @trackerToDel = @campaign.add_tracker(label: "tracker to delete")
+      @trackerToNotDel = @campaign.add_tracker(label: "tracker to not delete")
+    end
+
+    it 'HAPPY: should delete a tracker' do
+      req_header = {
+        'HTTP_AUTHORIZATION' => "Bearer #{@auth_token}",
+        'CONTENT_TYPE' => 'application/json'
+      }
+      delete "/api/v1/campaigns/#{@campaign.id}/trackers/#{@trackerToDel.id}",
+        _, req_header
+      _(last_response.status).must_equal 200
+      Tracker[@trackerToDel.id].must_be_nil
+    end
+
+    it 'SAD: should not delete a tracker for non-existant tracker' do
+      req_header = {
+        'HTTP_AUTHORIZATION' => "Bearer #{@auth_token}",
+        'CONTENT_TYPE' => 'application/json'
+      }
+      delete "/api/v1/campaigns/#{invalid_id(Campaign)}/trackers/0e309683-a89e-4a63-a582-f11dd80311ab",
+           _, req_header
+      _(last_response.status).must_equal 401
+      _(last_response.location).must_be_nil
+    end
+
+    it 'SAD: should not add a tracker with no auth_token' do
+      req_header = { 'CONTENT_TYPE' => 'application/json' }
+      delete "/api/v1/campaigns/#{@campaign.id}/trackers/#{@trackerToNotDel.id}",
+        _, req_header
+      _(last_response.status).must_equal 401
+      Tracker[@trackerToNotDel.id].id.must_equal @trackerToNotDel.id
+    end
+  end
 end
