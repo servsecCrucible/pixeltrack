@@ -15,7 +15,7 @@ class PixelTrackerAPI < Sinatra::Base
         .first
       halt 401, 'Not authorized, or tracker might not exist' unless tracker
       visits = tracker.visits
-      JSON.pretty_generate(data: tracker, relationships: visits)
+      JSON.pretty_generate(data: tracker)
     rescue => e
       status 400
       logger.info "FAILED to process GET tracker request: #{e.inspect}"

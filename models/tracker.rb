@@ -28,6 +28,7 @@ class Tracker < Sequel::Model
             id: id,
             attributes: {
               label: label,
+              visits: visits,
               url: url
             }
           },
