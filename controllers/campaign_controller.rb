@@ -32,7 +32,19 @@ class PixelTrackerAPI < Sinatra::Base
       logger.info "FAILED to add contributor to campaign: #{e.inspect}"
       halt 401
     end
-
     contributor.to_json
+  end
+
+  delete '/api/v1/campaigns/:campaign_id/?' do
+    content_type 'application/json'
+    begin
+      campaign = affiliated_campaign(env, params[:campaign_id])
+      halt 401, 'Not authorized, or campaign might not exist' unless campaign
+      campaign.delete
+    rescue => e
+      logger.info "FAILED to remove campaign: #{e.inspect}"
+      halt 400
+    end
+    status 200
   end
 end

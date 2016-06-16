@@ -127,4 +127,38 @@ describe 'Testing Campaign resource routes' do
       _(@owner.campaigns.map(&:id)).wont_include @campaign.id
     end
   end
+
+  describe 'Deleting campaign' do
+    before do
+      @account = create_client_account({
+        'username' => 'delete.campaign',
+        'email' => 'delete@campaign.dc',
+        'password' => 'deletecampaignpassword'})
+      @campaignToDelete = CreateCampaignForOwner.call(
+        account: @account, label: 'Campaign to delete')
+      @campaignToNotDelete = CreateCampaignForOwner.call(
+        account: @account, label: 'Campaign to not delete')
+      @auth_token = authorized_account_token({
+        'username' => @account.username, 'password' => 'deletecampaignpassword'})
+    end
+
+    it 'HAPPY: should delete a campaign' do
+      req_header = {
+        'HTTP_AUTHORIZATION' => "Bearer #{@auth_token}",
+        'CONTENT_TYPE' => 'application/json'
+      }
+      delete "/api/v1/campaigns/#{@campaignToDelete.id}",
+        _, req_header
+      _(last_response.status).must_equal 200
+      Campaign[@campaignToDelete.id].must_be_nil
+    end
+
+    it 'SAD: should not delete a campaign with no auth_token' do
+      req_header = { 'CONTENT_TYPE' => 'application/json' }
+      delete "/api/v1/campaigns/#{@campaignToNotDelete.id}",
+        _, req_header
+      _(last_response.status).must_equal 401
+      Campaign[@campaignToNotDelete.id].id.must_equal @campaignToNotDelete.id
+    end
+  end
 end

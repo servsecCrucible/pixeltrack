@@ -17,22 +17,22 @@ class PixelTrackerAPI < Sinatra::Base
       visits = tracker.visits
       JSON.pretty_generate(data: tracker, relationships: visits)
     rescue => e
-        status 400
-        logger.info "FAILED to process GET tracker request: #{e.inspect}"
-        e.inspect
+      status 400
+      logger.info "FAILED to process GET tracker request: #{e.inspect}"
+      e.inspect
     end
   end
 
   post '/api/v1/campaigns/:campaign_id/trackers/?' do
     content_type 'application/json'
     begin
-        campaign = affiliated_campaign(env, params[:campaign_id])
-        halt 401, 'Not authorized, or tracker might not exist' unless campaign
-        new_data = JSON.parse(request.body.read)
-        saved_tracker = campaign.add_tracker(new_data)
+      campaign = affiliated_campaign(env, params[:campaign_id])
+      halt 401, 'Not authorized, or tracker might not exist' unless campaign
+      new_data = JSON.parse(request.body.read)
+      saved_tracker = campaign.add_tracker(new_data)
     rescue => e
-        logger.info "FAILED to create new tracker: #{e.inspect}"
-        halt 400
+      logger.info "FAILED to create new tracker: #{e.inspect}"
+      halt 400
     end
 
     status 201
@@ -42,16 +42,16 @@ class PixelTrackerAPI < Sinatra::Base
   delete '/api/v1/campaigns/:campaign_id/trackers/:id/?' do
     content_type 'application/json'
     begin
-        campaign = affiliated_campaign(env, params[:campaign_id])
-        halt 401, 'Not authorized, or tracker might not exist' unless campaign
-        tracker = Tracker
-          .where(campaign_id: params[:campaign_id], id: params[:id])
-          .first
-        halt 401, 'Not authorized, or tracker might not exist' unless tracker
-        tracker.delete
+      campaign = affiliated_campaign(env, params[:campaign_id])
+      halt 401, 'Not authorized, or tracker might not exist' unless campaign
+      tracker = Tracker
+        .where(campaign_id: params[:campaign_id], id: params[:id])
+        .first
+      halt 401, 'Not authorized, or tracker might not exist' unless tracker
+      tracker.delete
     rescue => e
-        logger.info "FAILED to remove tracker: #{e.inspect}"
-        halt 400
+      logger.info "FAILED to remove tracker: #{e.inspect}"
+      halt 400
     end
     status 200
   end
