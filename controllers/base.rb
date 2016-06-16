@@ -30,6 +30,14 @@ class PixelTrackerAPI < Sinatra::Base
     nil
   end
 
+  def affiliated_owned_campaign(env, campaign_id)
+    account = authenticated_account(env)
+    owned_campaigns = BaseAccount[account['id']].owned_campaigns
+    owned_campaigns.select { |camp| camp.id == campaign_id.to_i }.first
+  rescue
+    nil
+  end
+
   before do
     host_url = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
     @request_url = URI.join(host_url, request.path.to_s)

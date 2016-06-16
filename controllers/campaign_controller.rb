@@ -22,7 +22,7 @@ class PixelTrackerAPI < Sinatra::Base
     begin
       criteria = JSON.parse request.body.read
       contributor = FindBaseAccountByEmail.call(criteria['email'])
-      campaign = affiliated_campaign(env, params[:id])
+      campaign = affiliated_owned_campaign(env, params[:id])
       raise('Unauthorized or not found') unless campaign && contributor
       contributors = AddContributorForProject.call(
         contributor_id: contributor.id,
@@ -32,7 +32,6 @@ class PixelTrackerAPI < Sinatra::Base
       logger.info "FAILED to add contributor to campaign: #{e.inspect}"
       halt 401
     end
-
     contributor.to_json
   end
 end

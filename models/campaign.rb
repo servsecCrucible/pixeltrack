@@ -18,14 +18,6 @@ class Campaign < Sequel::Model
     super
   end
 
-  # def label=(label_plaintext)
-  #   self.label_encrypted = encrypt(label_plaintext) if label_plaintext
-  # end
-  #
-  # def label
-  #   @label = decrypt(label_encrypted)
-  # end
-
   def nb_visits
     trackers.map { |tracker| tracker.visits.size}.inject(0, :+)
   end
@@ -35,6 +27,7 @@ class Campaign < Sequel::Model
             id: id,
             attributes: {
               label: label,
+              owner: owner,
               nb_visits: nb_visits
             }
           },
